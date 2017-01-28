@@ -1,6 +1,11 @@
 package com.droidandroid.gametest;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -11,12 +16,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread gameThread;
 
+    private Player player;
+    private Point playerPoint;
+
     public Game(Context context) {
         super(context);
 
         getHolder().addCallback(this);
 
         gameThread = new GameThread(getHolder(), this);
+
+        player = new Player(new Rect(0, 0, 128, 128), Color.BLUE);
+        playerPoint = new Point(256, 960);
 
         setFocusable(true);
     }
@@ -47,7 +58,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void update() {
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent){
+        if(motionEvent.getAction() == MotionEvent.ACTION_MOVE){
+            playerPoint.set((int) motionEvent.getX(), 960);
+        }
 
+        return true;
+    }
+
+    @Override
+    public void draw(Canvas canvas){
+        canvas.drawColor(Color.WHITE);
+        player.draw(canvas);
+    }
+
+    public void update() {
+        player.update(playerPoint);
     }
 }
